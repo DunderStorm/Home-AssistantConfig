@@ -6,7 +6,7 @@
 !*.py
 !.gitignore
 !*.md
-!.appdaemon
+!.appdaemon/apps
 
 # Ignore folders.
 .storage
