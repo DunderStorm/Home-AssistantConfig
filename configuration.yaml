@@ -1,0 +1,35 @@
+#Enable discovvery
+discovery:
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+homeassistant:
+  customize: !include customize.yaml
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+#circadian ligthing switch
+input_boolean:
+  circadian_lighting:
+    name: Circadian Lighting
+    icon: mdi:alarm-light
+    
+  test_switch:
+    name: Test switch
+    icon: mdi:alarm-light
+
+# configure lights
+light:
+  - platform: group
+    name: Hallway Chandelier
+    entities:
+    - light.hallway_chandelier1
+    - light.hallway_chandelier2
