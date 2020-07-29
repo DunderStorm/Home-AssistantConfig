@@ -1,0 +1,25 @@
+---
+hello_world:
+  module: hello
+  class: HelloWorld
+
+ClosetLight:
+  module: basicSwitches
+  class: switchedLight
+  sensor: binary_sensor.closet_door
+  actuators: light.closet
+
+KitchenBenchLight:
+  module: basicSwitches
+  class: switchedLight
+  sensor: binary_sensor.kitchen_bench_presence
+  actuators: switch.kitchen_bench_light
+  offTimer: 60
+  onlyWhenDark: true
+  
+  
+Circadian:
+    module: circadianLightning
+    class: circadianLight
+    lights: light.hallway_chandelier, light.workroom_ceiling, light.kitchen_ceiling1
+    onOffBool: input_boolean.circadian_lighting
