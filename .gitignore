@@ -5,7 +5,7 @@
 !*.yaml
 !.gitignore
 !*.md
-!appdaemon
+!.appdaemon
 
 # Ignore folders.
 .storage
