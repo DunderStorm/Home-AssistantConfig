@@ -2,6 +2,7 @@ import appdaemon.plugins.hass.hassapi as hass
 from pysolar.solar import *
 import datetime
 
+
 class circadianLight(hass.Hass):
     def initialize(self):
         
@@ -33,9 +34,8 @@ class circadianLight(hass.Hass):
         for light in self.lights:
           self.listen_state(self.lightEvent, light, new = "on")        
         
-        self.log(f'Initializing at {self.config["latitude"]}(Lat), {self.config["longitude"]}(Long)')
-    
-    
+        self.log(f'Initializing at {self.config["latitude"]:.2f}(Lat), {self.config["longitude"]:.2f}(Long)')
+
     def configureParameter(self, inputArg, default):
         if inputArg in self.args:
             return inputArg
@@ -90,13 +90,14 @@ class circadianLight(hass.Hass):
               if(self.get_state(light) == "on"):
                 self.turn_on(light, kelvin = self.colorTemp, brightness_pct = self.brightness)
         
-        self.log(f"solar elevation: {solarElevation}, color temp: {self.colorTemp}, brightness: {self.brightness}")
+        self.log(f"solar elevation: {solarElevation:.2f}, color temp: {self.colorTemp:.2f}, brightness: {self.brightness:.2f}")
        
         
     def lightEvent(self, entity, attribute, old, new,  kwargs):
       if (self.get_state(self.onOffBool) == "on"):
         self.log(entity + " turned on, color reset")
         self.turn_on(entity, kelvin = self.colorTemp, brightness_pct = self.brightness)
+        self.log(entity + " brightness: " + f'{self.get_state(entity, attribute="brightness")}')
         
         
     def onOffBoolEvent(self, entity, attribute, old, new,  kwargs):

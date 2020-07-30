@@ -1,4 +1,6 @@
 import appdaemon.plugins.hass.hassapi as hass
+import datetime
+from globalHelpers import Enviroment, Helpers
 
 # basic switched out with optional off hysteresis timer and only at night filter
 class switchedLight(hass.Hass):
@@ -23,10 +25,10 @@ class switchedLight(hass.Hass):
         
         self.log(self.sensor)
         self.log(self.actuators)
-    
+ 
     def trigger(self, entity, attribute, old, new, kwargs):
         if new == "on":
-            if (self.isItLightOutside() and self.onlyWhenDark):
+            if (Enviroment.isItLightOutside(self) and self.onlyWhenDark):
                 self.log("pressence detected but weather is great and sun still up")
             else:
                 if self.timerHandle == None:
@@ -40,13 +42,6 @@ class switchedLight(hass.Hass):
         if new == "off":
             self.timerHandle = self.run_in(self.timeout, self.offTimer)
     
-    def isItLightOutside(self):
-        weather = self.get_state("weather.home")
-        if (self.sun_up()):
-            if (weather == "sunny"): 
-                return True
-        
-        return False
 
     def timeout(self, kwargs):
         if (self.get_state(self.sensor) == "off"):
@@ -62,3 +57,41 @@ class switchedLight(hass.Hass):
     def turnOffAll(self):
         for actuator in self.actuators:
             self.turn_off(actuator)
+            
+            
+class timerSwitch(hass.Hass):
+  
+  def initialize(self):
+    self.actuators = self.args["actuators"].split(",")
+    self.onlyWhenDark = Helpers.configureParameter(self, "onlyWhenDark", False)
+    
+    self.start = self.convertToMinutesSinceMidnight(Helpers.configureParameter(self, "start", "10:00"))
+    self.end = self.convertToMinutesSinceMidnight(Helpers.configureParameter(self, "end", "23:59"))
+    
+    self.run_every(self.updateSwitch, self.datetime() + datetime.timedelta(seconds=3), 60)
+
+  def convertToMinutesSinceMidnight(self, inputString):
+    tempList = [int(x) for x in inputString.split(":")]
+    return tempList[0]*60 + tempList[1]
+    
+  def updateSwitch(self, kwargs):
+    currentTime = self.datetime()
+    minutesSinceMidnight = currentTime.hour*60 + currentTime.minute
+    
+    
+    if (minutesSinceMidnight < self.start):
+      self.log("doNothing")
+      
+    elif (minutesSinceMidnight < self.end):
+      if (Enviroment.isItLightOutside(self) and self.onlyWhenDark):
+        self.log("too light for lights")
+      else:
+        #Turn on all lights
+        for actuator in self.actuators:
+          self.turn_on(actuator)
+    
+    else:
+      #Turn off all lights
+      for actuator in self.actuators:
+        self.turn_off(actuator)
+    

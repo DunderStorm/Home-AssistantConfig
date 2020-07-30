@@ -3,6 +3,8 @@ hello_world:
   module: hello
   class: HelloWorld
 
+global_modules: globalHelpers
+
 ClosetLight:
   module: basicSwitches
   class: switchedLight
@@ -12,6 +14,7 @@ ClosetLight:
 KitchenBenchLight:
   module: basicSwitches
   class: switchedLight
+  global_dependencies: Enviroment
   sensor: binary_sensor.kitchen_bench_presence
   actuators: switch.kitchen_bench_light
   offTimer: 60
@@ -23,3 +26,8 @@ Circadian:
     class: circadianLight
     lights: light.hallway_chandelier, light.workroom_ceiling, light.kitchen_ceiling1
     onOffBool: input_boolean.circadian_lighting
+
+TimedLights:
+  module: basicSwitches
+  class: timerSwitch
+  actuators: light.hallway_chandelier
