@@ -21,6 +21,9 @@ class circadianLight(hass.Hass):
         self.wakeUpStart = self.convertToMinutesSinceMidnight(self.configureParameter("wakeUpStart", "8:30"))
         self.wakeUpEnd = self.convertToMinutesSinceMidnight(self.configureParameter("wakeUpEnd", "9:00"))
         
+        self.latitude = 0 # 59.4 #self.config["latitude"]
+        self.longitude = 18.0 #self.config["longitude"]
+        
         self.eveningLength = self.bedtime - self.eveningStart        
         self.wakeUpLength = self.wakeUpEnd - self.wakeUpStart
         
@@ -34,7 +37,7 @@ class circadianLight(hass.Hass):
         for light in self.lights:
           self.listen_state(self.lightEvent, light, new = "on")        
         
-        self.log(f'Initializing at {self.config["latitude"]:.2f}(Lat), {self.config["longitude"]:.2f}(Long)')
+        self.log(f'Initializing at {self.latitude:.2f}(Lat), {self.longitude:.2f}(Long)')
 
     def configureParameter(self, inputArg, default):
         if inputArg in self.args:
@@ -54,7 +57,7 @@ class circadianLight(hass.Hass):
     
     #recalculate color & brightness
     def updateColor(self, kwargs):
-        solarElevation = get_altitude(self.config["latitude"], self.config["longitude"], self.get_now())
+        solarElevation = get_altitude(self.latitude, self.longitude, self.get_now())
         currentTime = self.datetime()
         minutesSinceMidnight = currentTime.hour*60 + currentTime.minute
         
@@ -90,7 +93,7 @@ class circadianLight(hass.Hass):
               if(self.get_state(light) == "on"):
                 self.turn_on(light, kelvin = self.colorTemp, brightness_pct = self.brightness)
         
-        self.log(f"solar elevation: {solarElevation:.2f}, color temp: {self.colorTemp:.2f}, brightness: {self.brightness:.2f}")
+        self.log(f"solar elevation: {solarElevation:.0f}, color temp: {self.colorTemp:.0f}, brightness: {self.brightness:.0f}")
        
         
     def lightEvent(self, entity, attribute, old, new,  kwargs):

@@ -24,10 +24,18 @@ KitchenBenchLight:
 Circadian:
     module: circadianLightning
     class: circadianLight
-    lights: light.hallway_chandelier, light.workroom_ceiling, light.kitchen_ceiling1
+    lights: light.hallway_chandelier, light.kitchen_ceiling, light.workroom_ceiling, light.bedroom_ceiling
     onOffBool: input_boolean.circadian_lighting
 
 TimedLights:
   module: basicSwitches
   class: timerSwitch
   actuators: light.hallway_chandelier
+  end: '23:00'
+
+TimedLights2:
+  module: basicSwitches
+  class: timerSwitch
+  actuators: switch.livingroom_cabinet
+  start: '8:00'
+  end: '23:59'

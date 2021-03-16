@@ -65,26 +65,32 @@ class timerSwitch(hass.Hass):
     self.actuators = self.args["actuators"].split(",")
     self.onlyWhenDark = Helpers.configureParameter(self, "onlyWhenDark", False)
     
+    
     self.start = self.convertToMinutesSinceMidnight(Helpers.configureParameter(self, "start", "10:00"))
     self.end = self.convertToMinutesSinceMidnight(Helpers.configureParameter(self, "end", "23:59"))
     
     self.run_every(self.updateSwitch, self.datetime() + datetime.timedelta(seconds=3), 60)
+    
+    self.log(f"initializing {self}")
 
   def convertToMinutesSinceMidnight(self, inputString):
+    print (inputString)
     tempList = [int(x) for x in inputString.split(":")]
+    print (tempList)
     return tempList[0]*60 + tempList[1]
     
   def updateSwitch(self, kwargs):
     currentTime = self.datetime()
     minutesSinceMidnight = currentTime.hour*60 + currentTime.minute
-    
-    
-    if (minutesSinceMidnight < self.start):
-      self.log("doNothing")
-      
-    elif (minutesSinceMidnight < self.end):
+    #self.log(f"updating {self} start {self.start } end {self.end }, minutes since midnight {minutesSinceMidnight}")
+
+    if (self.start < minutesSinceMidnight < self.end):
       if (Enviroment.isItLightOutside(self) and self.onlyWhenDark):
         self.log("too light for lights")
+        #Turn off all lights
+        for actuator in self.actuators:
+          self.turn_off(actuator)
+          
       else:
         #Turn on all lights
         for actuator in self.actuators:

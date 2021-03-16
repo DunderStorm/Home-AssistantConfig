@@ -1,3 +1,9 @@
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+
 #Enable discovvery
 discovery:
 
@@ -7,14 +13,14 @@ default_config:
 homeassistant:
   customize: !include customize.yaml
 
+frontend:
+  themes: !include_dir_merge_named themes
+
 # Text to speech
 tts:
   - platform: google_translate
 
-group: !include groups.yaml
-automation: !include automations.yaml
-script: !include scripts.yaml
-scene: !include scenes.yaml
+
 
 #circadian ligthing switch
 input_boolean:
@@ -33,3 +39,23 @@ light:
     entities:
     - light.hallway_chandelier1
     - light.hallway_chandelier2
+    
+  - platform: group    
+    name: Kitchen Ceiling
+    entities:
+    - light.kitchen_ceiling1
+    - light.kitchen_ceiling2
+  
+  - platform: group
+    name: Workroom Ceiling
+    entities:
+    - light.workroom_ceiling_1
+    - light.workroom_ceiling_2
+    - light.workroom_ceiling_3
+
+  - platform: group
+    name: Bedroom Ceiling
+    entities:
+    - light.bedroom_ceiling_1
+    - light.bedroom_ceiling_2
+    - light.bedroom_ceiling_3

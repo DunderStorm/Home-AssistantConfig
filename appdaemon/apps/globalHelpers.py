@@ -5,6 +5,7 @@ class Enviroment(hass.Hass):
   def isItLightOutside(self):
     weather = self.get_state("weather.home")
     if (self.sun_up()):
+      print("sun up")
       if (weather == "sunny"): 
         return True
         
@@ -14,6 +15,6 @@ class Helpers(hass.Hass):
   @staticmethod
   def configureParameter(self, inputArg, default):
     if inputArg in self.args:
-        return inputArg
+        return self.args[inputArg]
     else:
         return default
